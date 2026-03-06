@@ -7,7 +7,7 @@ const page = () => {
     <main className="container wrapper">
 
       <HeroSection />
-      <div className='library-hero-grid'>
+      <div className='library-books-grid'>
         {sampleBooks.map((book) => (
           <BookCard key={book._id} author={book.author} title={book.title} coverURL={book.coverURL} slug={book.slug} />
         ))}
