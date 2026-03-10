@@ -1,33 +1,37 @@
 import { z } from "zod";
+import {
+  MAX_FILE_SIZE,
+  ACCEPTED_PDF_TYPES,
+  ACCEPTED_IMAGE_TYPES,
+  MAX_IMAGE_SIZE,
+} from "./constants";
 
 export const UploadSchema = z.object({
-  pdf: z
-    .instanceof(File, { message: "Please upload a PDF file" })
-    .refine((f) => f.type === "application/pdf", "File must be a PDF")
-    .refine((f) => f.size <= 50 * 1024 * 1024, "PDF must be 50MB or less"),
-  coverImage: z
-    .instanceof(File)
-    .refine(
-      (f) =>
-        ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(f.type),
-      "Cover must be an image",
-    )
-    .optional()
-    .nullable(),
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(120, "Title must be 120 characters or less")
-    .refine((v) => !/\s{2,}/.test(v), "Title cannot contain extra spaces"),
+  title: z.string().min(1, "Title is required").max(100, "Title is too long"),
   author: z
     .string()
     .min(1, "Author name is required")
-    .max(80, "Author name must be 80 characters or less")
+    .max(100, "Author name is too long"),
+  persona: z.string().min(1, "Please select a voice"),
+  pdfFile: z
+    .instanceof(File, { message: "PDF file is required" })
     .refine(
-      (v) => !/\s{2,}/.test(v),
-      "Author name cannot contain extra spaces",
+      (file) => file.size <= MAX_FILE_SIZE,
+      "File size must be less than 50MB",
+    )
+    .refine(
+      (file) => ACCEPTED_PDF_TYPES.includes(file.type),
+      "Only PDF files are accepted",
     ),
-  voice: z.string().min(1, "Please select a voice"),
+  coverImage: z
+    .instanceof(File)
+    .optional()
+    .refine(
+      (file) => !file || file.size <= MAX_IMAGE_SIZE,
+      "Image size must be less than 10MB",
+    )
+    .refine(
+      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported",
+    ),
 });
-
-export type UploadFormValues = z.infer<typeof UploadSchema>;
