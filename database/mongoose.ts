@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 
 const MONGO_URI = process.env.MONGO_URI;
 
-if (!MONGO_URI) {
-  throw new Error("Please add your Mongo URI to .env.local");
-}
-
 declare global {
   var mongooseCache: {
     conn: typeof mongoose | null;
@@ -18,6 +14,10 @@ let cached =
   (global.mongooseCache = { conn: null, promise: null });
 
 export const connectToDatabase = async () => {
+  if (!MONGO_URI) {
+    throw new Error("Please add your Mongo URI to .env.local");
+  }
+
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
