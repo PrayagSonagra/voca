@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📚 Voca - AI-Powered Book Library
+Voca transforms static PDFs into interactive, AI-powered conversations. Upload your books, organize your library, and ask questions directly to your documents.
 
-## Getting Started
+🚀 Key Features
+PDF Intelligence: Automatic text extraction and intelligent segmentation with context overlap to ensure the AI never loses the thread of the conversation.
 
-First, run the development server:
+Library Management: Seamlessly organize your personal collection with custom slugs, metadata tracking, and real-time status updates.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Secure Authentication: Fully integrated with Clerk for protected user sessions and private library access.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Performance Driven: Optimized database queries using Mongoose .lean() for high-speed data retrieval.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Modern UX/UI: Built with a sleek, responsive interface using Tailwind CSS, Shadcn/UI, and Sonner for non-blocking notifications.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Theme Continuity: Native Light and Dark mode support that respects system preferences without hydration flashes.
 
-## Learn More
+🛠️ Tech Stack
+Frontend & Core
+Framework: Next.js 15+ (App Router)
 
-To learn more about Next.js, take a look at the following resources:
+Language: TypeScript
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Styling: Tailwind CSS
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+UI Components: Shadcn/UI
 
-## Deploy on Vercel
+State & Providers: next-themes, Clerk
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Backend & Database
+Database: MongoDB Atlas
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ORM: Mongoose
+
+PDF Processing: pdfjs-dist
+
+📖 Core Logic: Context-Aware Segmentation
+To ensure AI models can process large books accurately, Voca utilizes a Sliding Window algorithm for text extraction. This process prevents context loss at the edges of text chunks.
+
+Extraction: Raw text is pulled from PDF layers using pdfjs-dist.
+
+Tokenization: Content is split into word arrays to prevent mid-word cutting.
+
+Chunking: Text is divided into segments (Default: 500 words).
+
+Overlapping: Each segment carries an "Overlap" (Default: 50 words) from the previous chunk, ensuring semantic continuity during AI vectorization.
+
+📁 Project Architecture
+app/: Next.js App Router (Pages, Layouts, and API endpoints)
+
+components/: Modular React components (Navbar, UploadForm, UI kit)
+
+models/: Mongoose schemas for Book and BookSegment
+
+lib/: Core utilities including the PDF processing engine and database configuration
+
+hooks/: Custom React hooks for application logic
