@@ -74,8 +74,6 @@ export const saveBookSegments = async (
   try {
     await connectToDatabase();
 
-    console.log("segments ----------", segments);
-
     const segmentsToInsert = segments.map(
       ({ text, segmentIndex, pageNumber, wordCount }) => ({
         clerkId,
@@ -123,6 +121,64 @@ export const getAllBooks = async () => {
     };
   } catch (error) {
     console.log("Error getting all books", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+};
+
+export const searchBookSegments = async (
+  bookId: string,
+  query: string,
+  topN: number = 3,
+) => {
+  try {
+    await connectToDatabase();
+
+    const segments = await BookSegment.find(
+      {
+        bookId,
+        $text: { $search: query },
+      },
+      { score: { $meta: "textScore" } },
+    )
+      .sort({ score: { $meta: "textScore" } })
+      .limit(topN)
+      .lean();
+
+    return {
+      success: true,
+      data: serializeData(segments),
+    };
+  } catch (error) {
+    console.log(`Error searching book segments for bookId ${bookId}`, error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+};
+
+export const getBookBySlug = async (slug: string) => {
+  try {
+    await connectToDatabase();
+
+    const book = await Book.findOne({ slug }).lean();
+
+    if (!book) {
+      return {
+        success: false,
+        error: "Book not found",
+      };
+    }
+
+    return {
+      success: true,
+      data: serializeData(book),
+    };
+  } catch (error) {
+    console.log(`Error getting book by slug ${slug}`, error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error),
